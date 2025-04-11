@@ -1,36 +1,41 @@
-import * as THREE from 'three';
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>My first three.js app</title>
+    <script>
+    AFRAME.registerComponent('modify-materials', {
+      init: function () {
+        // Wait for model to load.
+        this.el.addEventListener('model-loaded', () => {
+          // Grab the mesh / scene.
+          const obj = this.el.getObject3D('mesh');
+          // Go over the submeshes and modify materials we want.
+          obj.traverse(node => {
+            if (node.name.indexOf('ship') !== -1) {
+              node.material.color.set('red');
+            }
+          });
+        });
+      }
+    });
+    </script>
+    <script src="https://cdn.rawgit.com/mrturck/aframe-joystick/master/joystick.min.js"></script>
+    <style>
+      body { margin: 0; }
+    </style>
+  </head>
+  <body>
 
-const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+<a-scene background="color: #ECECEC" joystick vr-mode-ui="enabled: false">
+  <a-assets>
+    <a-asset-item id="car" src="model/suzanne.gltf"></a-asset-item>
+  </a-assets>
+  <a-entity gltf-model="#car" scale="0.01 0.01 0.01"></a-entity>
+  <a-entity camera id="camera" position="0 1.6 0" look-controls wasd-controls></a-entity>
+  <a-entity gltf-model="#car" modify-materials></a-entity>
+</a-scene>
+  </body>
+</html>
 
-const renderer = new THREE.WebGLRenderer();
-renderer.setSize( window.innerWidth, window.innerHeight );
-document.body.appendChild( renderer.domElement );
-
-const geometry = new THREE.BoxGeometry( 1, 1, 1 );
-const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
-const cube = new THREE.Mesh( geometry, material );
-//scene.add( cube );
-
-camera.position.z = 5;
-
-const loader = new GLTFLoader();
-
-loader.load( 'model/model2.glb', function ( gltf ) {
-
-  scene.add( gltf.scene );
-
-}, undefined, function ( error ) {
-
-  console.error( error );
-
-} );
-
-function animate() {
-  cube.rotation.x += 0.01;
-  cube.rotation.y += 0.01;
-  renderer.render( scene, camera );
-}
-renderer.setAnimationLoop( animate );
 
